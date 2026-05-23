@@ -7,6 +7,8 @@ using EF_Core_Code_First.Models;
 
 namespace EF_Core_Code_First.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class PcsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -16,6 +18,7 @@ namespace EF_Core_Code_First.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<ResponseDTO>>> GetPcs()
         {
             var pcs = await _context.PCs
@@ -32,7 +35,7 @@ namespace EF_Core_Code_First.Controllers
 
             return Ok(pcs);
         }
-
+        [HttpGet("{id}/components")]
         public async Task<ActionResult<IEnumerable<ComponentResponseDTO>>> GetPcComponents(int id)
         {
             var pcExists = await _context.PCs.AnyAsync(p => p.Id == id);
@@ -53,7 +56,7 @@ namespace EF_Core_Code_First.Controllers
 
             return Ok(components);
         }
-
+        [HttpPost]
         public async Task<ActionResult<ResponseDTO>> CreatePc(RequestDTO request)
         {
             if (!ModelState.IsValid)
@@ -85,7 +88,7 @@ namespace EF_Core_Code_First.Controllers
 
             return CreatedAtAction(nameof(GetPcs), new { id = pc.Id }, responseDto);
         }
-
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePc(int id, RequestDTO request)
         {
             var pc = await _context.PCs.FindAsync(id);
@@ -104,7 +107,7 @@ namespace EF_Core_Code_First.Controllers
 
             return Ok(pc);
         }
-
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePc(int id)
         {
             var pc = await _context.PCs.FindAsync(id);
